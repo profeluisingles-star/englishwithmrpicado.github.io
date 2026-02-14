@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hangman</title>
+<style>
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#ff9966,#ff5e62);
+text-align:center;
+color:white;
+margin:0;
+}
+
+h1{margin:30px;}
+
+#word{
+font-size:30px;
+letter-spacing:10px;
+margin:20px;
+}
+
+#letters button{
+margin:5px;
+padding:8px 12px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button{
+margin-top:20px;
+padding:12px 20px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎯 Hangman</h1>
+
+<p id="word"></p>
+<p>Lives: <span id="lives">6</span></p>
+
+<div id="letters"></div>
+
+<br>
+<button onclick="location.href='index.html'">⬅ Back to Games</button>
+
+<script>
+const words=["teacher","student","grammar","english","practice"];
+let chosen=words[Math.floor(Math.random()*words.length)];
+let display=Array(chosen.length).fill("_");
+let lives=6;
+
+document.getElementById("word").innerText=display.join(" ");
+
+function updateWord(){
+document.getElementById("word").innerText=display.join(" ");
+}
+
+function createLetters(){
+const container=document.getElementById("letters");
+for(let i=97;i<=122;i++){
+let btn=document.createElement("button");
+let letter=String.fromCharCode(i);
+btn.innerText=letter;
+btn.onclick=function(){
+btn.disabled=true;
+if(chosen.includes(letter)){
+for(let j=0;j<chosen.length;j++){
+if(chosen[j]===letter){
+display[j]=letter;
+}
+}
+updateWord();
+if(!display.includes("_")){
+alert("You win!");
+location.reload();
+}
+}else{
+lives--;
+document.getElementById("lives").innerText=lives;
+if(lives===0){
+alert("You lost! Word was: "+chosen);
+location.reload();
+}
+}
+};
+container.appendChild(btn);
+}
+}
+
+createLetters();
+</script>
+
+</body>
+</html>
