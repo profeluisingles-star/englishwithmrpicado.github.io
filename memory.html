@@ -1,109 +1,74 @@
 <!DOCTYPE html>
 <html>
-<head><link rel="stylesheet" href="css/styles.css">
+<head>
 <meta charset="UTF-8">
 <title>Memory Game</title>
-<style><script src="js/animations.js"></script>
-body{
-font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#ff9966,#ff5e62);
-text-align:center;
-color:white;
-margin:0;
-}
-
-h1{margin:30px;}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(4,100px);
-gap:15px;
-justify-content:center;
-margin-top:30px;
-}
-
-.card{
-width:100px;
-height:100px;
-background:white;
-color:#ff5e62;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
-font-size:18px;
-border-radius:10px;
-cursor:pointer;
-}
-
-button{
-margin-top:30px;
-padding:12px 20px;
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-}
-</style>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-<h1>🧠 Memory Game</h1>
+<button class="nav-btn" onclick="location.href='index.html'">🏠 Home</button>
 
-<div class="grid" id="grid"></div>
+<header class="animate">
+🧩 Memory Game
+</header>
 
-<br>
-<button onclick="location.href='index.html'">⬅ Back to Games</button>
+<div class="container animate" id="gameBoard"></div>
 
 <script>
-const words=["dog","cat","sun","book","dog","cat","sun","book"];
-let shuffled=words.sort(()=>0.5-Math.random());
-let first=null;
-let lock=false;
 
-const grid=document.getElementById("grid");
+const words = ["cat","dog","sun","book","pen","tree"];
+let cards = [...words, ...words];
+cards.sort(()=>0.5-Math.random());
 
-shuffled.forEach(word=>{
-let div=document.createElement("div");
-div.className="card";
-div.dataset.word=word;
-div.innerText="?";
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
 
-div.onclick=function(){
-if(lock||div.innerText!=="?")return;
+const board = document.getElementById("gameBoard");
 
-div.innerText=word;
+cards.forEach(word=>{
+let card = document.createElement("div");
+card.classList.add("card");
+card.innerText="?";
+card.dataset.word = word;
 
-if(!first){
-first=div;
+card.addEventListener("click", ()=>{
+
+if(lockBoard || card===firstCard) return;
+
+card.innerText = word;
+
+if(!firstCard){
+firstCard = card;
+return;
+}
+
+secondCard = card;
+lockBoard = true;
+
+if(firstCard.dataset.word === secondCard.dataset.word){
+firstCard = null;
+secondCard = null;
+lockBoard = false;
 }else{
-if(first.dataset.word===word){
-first=null;
-}else{
-lock=true;
 setTimeout(()=>{
-first.innerText="?";
-div.innerText="?";
-first=null;
-lock=false;
-},800);
+firstCard.innerText="?";
+secondCard.innerText="?";
+firstCard = null;
+secondCard = null;
+lockBoard = false;
+},1000);
 }
-}
-};
-grid.appendChild(div);
+
 });
+
+board.appendChild(card);
+});
+
 </script>
 
+<script src="js/animations.js"></script>
 </body>
 </html>
-<div style="position:fixed;top:15px;left:15px;">
-<button onclick="location.href='index.html'" 
-style="padding:8px 15px;border:none;border-radius:8px;cursor:pointer;">
-🏠 Home
-</button>
-</div>
-<button onclick="location.href='https://sites.google.com/view/englishwithmrpicado/home'">
-🌐 Main Website
-</button>
-
