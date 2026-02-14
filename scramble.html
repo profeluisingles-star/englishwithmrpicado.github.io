@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>English with Mr. Picado - Scramble</title>
+
+<style>
+body{
+font-family:'Segoe UI',sans-serif;
+background: linear-gradient(135deg, #ff9966, #ff5e62);
+margin:0;
+padding:0;
+text-align:center;
+color:white;
+}
+
+.header{
+padding:20px;
+font-size:28px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+.container{
+background:white;
+color:#333;
+max-width:600px;
+margin:30px auto;
+padding:30px;
+border-radius:20px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+
+h2{
+font-size:30px;
+letter-spacing:3px;
+color:#ff5e62;
+}
+
+button{
+padding:12px 18px;
+margin:8px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#ff5e62;
+color:white;
+font-weight:bold;
+transition:0.3s;
+}
+
+button:hover{
+background:#ff9966;
+transform:scale(1.05);
+}
+
+input{
+padding:12px;
+width:80%;
+margin:10px 0;
+border-radius:10px;
+border:2px solid #ff5e62;
+text-align:center;
+font-size:16px;
+}
+
+#timer{
+font-size:20px;
+font-weight:bold;
+color:#ff5e62;
+margin-top:10px;
+}
+
+#score{
+font-size:18px;
+font-weight:bold;
+margin-top:10px;
+}
+
+select{
+padding:10px;
+border-radius:8px;
+border:2px solid #ff5e62;
+font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+🌟 English with Mr. Picado 🌟
+<p style="font-size:16px;font-weight:normal;">Word Scramble Challenge</p>
+</div>
+
+<div class="container">
+
+<select id="levelSelect">
+<option value="A1">A1</option>
+<option value="A2">A2</option>
+<option value="B1">B1</option>
+<option value="B2">B2</option>
+<option value="C1">C1</option>
+<option value="C2">C2</option>
+</select>
+
+<button onclick="startGame()">Start</button>
+
+<h2 id="scrambledWord"></h2>
+<p id="hint"></p>
+
+<input type="text" id="answerInput" placeholder="Type your answer">
+<br>
+<button onclick="checkAnswer()">Check</button>
+
+<p id="timer"></p>
+<p id="score"></p>
+
+</div>
+
+<script>
+
+const levelsData = {
+A1:[["banana","Yellow fruit"],["table","Furniture"],["rain","Water from sky"],["moon","Night object"]],
+A2:[["engineer","Designs machines"],["forest","Many trees"],["ticket","Travel pass"],["office","Workplace"]],
+B1:[["confidence","Belief in yourself"],["progress","Move forward"],["freedom","Being independent"],["decision","Choice"]],
+B2:[["strategy","Careful plan"],["innovation","New idea"],["leadership","Ability to guide"],["analysis","Detailed study"]],
+C1:[["sustainability","Long-term balance"],["perspective","Point of view"],["implementation","Putting into action"],["regulation","Official rule"]],
+C2:[["metamorphosis","Complete change"],["resilience","Recovery strength"],["ambiguity","Double meaning"],["coherence","Logical consistency"]]
+};
+
+let currentWord="";
+let score=0;
+let timer;
+let timeLeft=60;
+
+function shuffle(word){
+return word.split('').sort(()=>Math.random()-0.5).join('');
+}
+
+function startGame(){
+score=0;
+document.getElementById("score").innerText="";
+nextWord();
+}
+
+function nextWord(){
+const level=document.getElementById("levelSelect").value;
+const words=levelsData[level];
+const random=words[Math.floor(Math.random()*words.length)];
+currentWord=random[0];
+document.getElementById("scrambledWord").innerText=shuffle(currentWord);
+document.getElementById("hint").innerText="Hint: "+random[1];
+document.getElementById("answerInput").value="";
+startTimer();
+}
+
+function startTimer(){
+clearInterval(timer);
+timeLeft=60;
+document.getElementById("timer").innerText="⏳ Time: "+timeLeft;
+timer=setInterval(()=>{
+timeLeft--;
+document.getElementById("timer").innerText="⏳ Time: "+timeLeft;
+if(timeLeft<=0){
+clearInterval(timer);
+alert("⏰ Time's up!");
+nextWord();
+}
+},1000);
+}
+
+function checkAnswer(){
+const answer=document.getElementById("answerInput").value.toLowerCase();
+if(answer===currentWord){
+score++;
+document.getElementById("score").innerText="⭐ Score: "+score;
+nextWord();
+}else{
+alert("Try again!");
+}
+}
+
+</script>
+
+</body>
+</html>
+
+<br><br>
+<button onclick="location.href='index.html'">⬅ Back to Games</button>
