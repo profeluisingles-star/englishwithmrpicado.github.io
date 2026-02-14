@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>English with Mr. Picado - Master Quiz</title>
+
+<style>
+body{
+font-family:'Segoe UI',sans-serif;
+background: linear-gradient(135deg, #ff9966, #ff5e62);
+margin:0;
+padding:0;
+text-align:center;
+color:white;
+}
+
+.header{
+padding:20px;
+font-size:28px;
+font-weight:bold;
+}
+
+.container{
+background:white;
+color:#333;
+max-width:700px;
+margin:30px auto;
+padding:30px;
+border-radius:20px;
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+
+button{
+padding:12px 20px;
+margin:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#ff5e62;
+color:white;
+font-weight:bold;
+transition:0.3s;
+font-size:16px;
+}
+
+button:hover{
+background:#ff9966;
+transform:scale(1.05);
+}
+
+select{
+padding:10px;
+border-radius:8px;
+border:2px solid #ff5e62;
+font-weight:bold;
+}
+
+#question{
+font-size:20px;
+margin:20px 0;
+font-weight:bold;
+}
+
+#time{
+font-size:18px;
+color:#ff5e62;
+font-weight:bold;
+}
+
+#lives{
+font-size:18px;
+margin:10px;
+}
+
+#feedback{
+margin-top:15px;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🌟 English with Mr. Picado 🌟
+<p style="font-size:16px;font-weight:normal;">Grammar Survival Quiz</p>
+</div>
+
+<div class="container">
+
+<select id="levelSelect">
+<option value="A1">A1</option>
+<option value="A2">A2</option>
+<option value="B1">B1</option>
+<option value="B2">B2</option>
+<option value="C1">C1</option>
+<option value="C2">C2</option>
+</select>
+
+<button onclick="startGame()">Start</button>
+
+<div id="gameArea" style="display:none;">
+
+<p id="lives"></p>
+<p id="time"></p>
+<p id="question"></p>
+
+<button onclick="answer(true)">True</button>
+<button onclick="answer(false)">False</button>
+
+<p id="feedback"></p>
+
+</div>
+
+</div>
+
+<script>
+
+const levels = {
+
+A1:[
+{q:"She has a dog.",a:true,e:"Correct structure: subject + verb + object."},
+{q:"He go to school.",a:false,e:"Incorrect. It should be 'He goes' (3rd person singular)."},
+{q:"They are happy.",a:true,e:"Correct use of 'are' with plural subject."},
+{q:"I am student.",a:false,e:"Missing article. It should be 'I am a student.'"},
+{q:"We like pizza.",a:true,e:"Correct simple present form."},
+{q:"She don't like milk.",a:false,e:"Incorrect. Use 'doesn't' with she/he/it."},
+{q:"The cat is black.",a:true,e:"Correct adjective placement."},
+{q:"He are tall.",a:false,e:"Incorrect verb. Use 'is' with he/she/it."},
+{q:"It is raining.",a:true,e:"Correct present continuous form."},
+{q:"They has two cars.",a:false,e:"Incorrect. 'They have' not 'has'."}
+],
+
+A2:[
+{q:"She has lived here for five years.",a:true,e:"Correct present perfect with 'for'."},
+{q:"I am knowing the answer.",a:false,e:"'Know' is a stative verb. Use simple present."},
+{q:"We were watching TV.",a:true,e:"Correct past continuous."},
+{q:"He didn't went home.",a:false,e:"After 'didn't' use base form: 'go'."},
+{q:"There are many people.",a:true,e:"Correct use of 'there are'."},
+{q:"She is more taller than me.",a:false,e:"Do not use double comparative."},
+{q:"I have finished my work.",a:true,e:"Correct present perfect structure."},
+{q:"He can to swim.",a:false,e:"After modal verbs use base form: 'can swim'."},
+{q:"They were late.",a:true,e:"Correct past form of 'to be'."},
+{q:"She don't has money.",a:false,e:"Should be 'doesn't have'."}
+],
+
+B1:[
+{q:"If I were you, I would study more.",a:true,e:"Correct second conditional."},
+{q:"She suggested to go early.",a:false,e:"Use gerund: 'suggested going'."},
+{q:"He has been working all day.",a:true,e:"Correct present perfect continuous."},
+{q:"I look forward to see you.",a:false,e:"Use gerund after 'look forward to'."},
+{q:"She speaks fluently.",a:true,e:"Correct adverb form."},
+{q:"The news are interesting.",a:false,e:"'News' is singular."},
+{q:"He denied stealing the money.",a:true,e:"Correct gerund after deny."},
+{q:"She is used to wake up early.",a:false,e:"Should be 'used to waking'."},
+{q:"I regret telling him.",a:true,e:"Correct gerund after regret."},
+{q:"He explained me the problem.",a:false,e:"Explain + object + to + person."}
+],
+
+B2:[
+{q:"Hardly had I arrived when it started.",a:true,e:"Correct inversion structure."},
+{q:"She insisted to pay.",a:false,e:"Use gerund: insisted on paying."},
+{q:"The project was carried out successfully.",a:true,e:"Correct passive voice."},
+{q:"He accused me for lying.",a:false,e:"Accuse someone of something."},
+{q:"She managed to finish on time.",a:true,e:"Correct infinitive after manage."},
+{q:"It depends of the weather.",a:false,e:"Depends on, not of."},
+{q:"The report was submitted yesterday.",a:true,e:"Correct passive structure."},
+{q:"She is responsible of the project.",a:false,e:"Responsible for, not of."},
+{q:"He admitted breaking the rules.",a:true,e:"Correct gerund after admit."},
+{q:"I prefer tea than coffee.",a:false,e:"Prefer tea to coffee."}
+],
+
+C1:[
+{q:"Not only did he win, but he also broke the record.",a:true,e:"Correct inversion structure."},
+{q:"She suggested that he goes early.",a:false,e:"After suggest use base form: 'go'."},
+{q:"Were it not for you, I would fail.",a:true,e:"Formal conditional inversion."},
+{q:"He demanded that she apologizes.",a:false,e:"Use base form: 'apologize'."},
+{q:"Little did I know the truth.",a:true,e:"Correct negative inversion."},
+{q:"It is essential that he attends.",a:true,e:"Subjunctive form is correct."},
+{q:"She recommended him to apply.",a:false,e:"Recommend that he apply."},
+{q:"He behaves as if he was the boss.",a:false,e:"Use 'were' in hypothetical situations."},
+{q:"So difficult was the exam that many failed.",a:true,e:"Correct inversion."},
+{q:"She insisted that he leaves.",a:false,e:"Subjunctive: 'leave'."}
+],
+
+C2:[
+{q:"Scarcely had she arrived when the meeting began.",a:true,e:"Correct formal inversion."},
+{q:"He proposed that she goes immediately.",a:false,e:"Use base form: 'go'."},
+{q:"Under no circumstances should you open the door.",a:true,e:"Correct negative inversion."},
+{q:"He suggested me to reconsider.",a:false,e:"Suggest that I reconsider."},
+{q:"Such was his anger that he resigned.",a:true,e:"Correct formal emphasis."},
+{q:"It is high time she leaves.",a:false,e:"Use past form: 'left'."},
+{q:"No sooner had they finished than it started.",a:true,e:"Correct inversion pair."},
+{q:"She demanded him to leave.",a:false,e:"Demand that he leave."},
+{q:"Rarely do we see such talent.",a:true,e:"Correct inversion structure."},
+{q:"He recommended to invest.",a:false,e:"Recommend investing."}
+]
+
+};
+
+let questions=[],current,score=0,lives=3,timer,timeLeft=15;
+
+function startGame(){
+score=0;
+lives=3;
+questions=[...levels[document.getElementById("levelSelect").value]]
+.sort(()=>0.5-Math.random());
+document.getElementById("gameArea").style.display="block";
+nextQuestion();
+}
+
+function nextQuestion(){
+if(lives<=0){
+endGame(false);
+return;
+}
+if(questions.length===0){
+endGame(true);
+return;
+}
+current=questions.pop();
+document.getElementById("question").innerText=current.q;
+document.getElementById("feedback").innerText="";
+updateLives();
+startTimer();
+}
+
+function updateLives(){
+document.getElementById("lives").innerText="Lives: "+"❤️".repeat(lives);
+}
+
+function startTimer(){
+clearInterval(timer);
+timeLeft=15;
+document.getElementById("time").innerText="⏳ "+timeLeft;
+timer=setInterval(()=>{
+timeLeft--;
+document.getElementById("time").innerText="⏳ "+timeLeft;
+if(timeLeft<=0){
+clearInterval(timer);
+lives--;
+document.getElementById("feedback").innerText="⛔ Time's up! "+current.e;
+nextQuestion();
+}
+},1000);
+}
+
+function answer(v){
+clearInterval(timer);
+if(v===current.a){
+score++;
+document.getElementById("feedback").innerText="✅ Correct!";
+}else{
+lives--;
+document.getElementById("feedback").innerText="❌ Incorrect. "+current.e;
+}
+setTimeout(nextQuestion,2000);
+}
+
+function endGame(win){
+document.getElementById("question").innerText=
+win?"🏆 Excellent work! You survived the level!":
+"💔 You lost all lives. Try again!";
+document.getElementById("feedback").innerText=
+"Final Score: "+score;
+document.getElementById("time").innerText="";
+}
+
+</script>
+
+</body>
+</html>
+<br><br>
+<button onclick="location.href='index.html'">⬅ Back to Games</button>
